@@ -6,7 +6,7 @@ class EmberSerializeTest < ActiveSupport::TestCase
     @rapp = Rake::Application.new
     # _, rargs = @rapp.parse_task_string("")
     @blank_args = Rake::TaskArguments.new([],[])
-    @create_args = Rake::TaskArguments.new([],['missing:create'])
+    @create_args = Rake::TaskArguments.new([],[':create'])
     @jdir = "test/dummy/app/assets/javascripts/"
     @mdir = "#{@jdir}models/"
     EmberSerialize::Serializer.javascripts_dir = @jdir
@@ -20,7 +20,9 @@ class EmberSerializeTest < ActiveSupport::TestCase
   end
 
   def read_model(model, pattern = nil)
-    lines = File.readlines("#{@mdir}#{model}.js.coffee")
+    file = "#{@mdir}#{model}.js.coffee"
+    return nil unless File.exists? file
+    lines = File.readlines file
     if pattern
       lines.grep(pattern).first
     else
@@ -188,7 +190,7 @@ EmberSerialize.Post = DS.Model.extend
 
   test "accepts engine argument" do
     # engine serializer
-    engine_args = Rake::TaskArguments.new([],['missing:create','engine:em'])
+    engine_args = Rake::TaskArguments.new([],[':create','engine:em'])
     engine_serializer = EmberSerialize::Serializer.new(engine_args)
     # prep dir
     clear_models
@@ -204,7 +206,7 @@ EmberSerialize.Post = DS.Model.extend
     assert_equal 3, Dir["#{@mdir}*js.em"].length, 'detects em engine type'
 
     # coffee engine serializer
-    engine_args = Rake::TaskArguments.new([],['missing:create','engine:coffee'])
+    engine_args = Rake::TaskArguments.new([],[':create','engine:coffee'])
     engine_serializer = EmberSerialize::Serializer.new(engine_args)
     # prep dir
     clear_models

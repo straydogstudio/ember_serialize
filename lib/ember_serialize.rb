@@ -9,7 +9,7 @@ module EmberSerialize
     def initialize(args)
       @args = args
       # args
-      @missing = args.extras.grep(/^missing\:/) {|e| e.gsub(/^.*:/,'').to_sym }.first || :skip
+      @missing = args.extras.include?(':create') ? :create : :skip
       @force_async = args.extras.grep(/^async\:/) {|e| e =~ /true/}.first ? true : false
       # variables
       @est = "ember_serialize:start"
@@ -122,11 +122,11 @@ MODEL
 
     def ember_model_parse(ember_model_file, model)
       if !File.exists? ember_model_file
-        if @missing == :skip
-          return nil
-        else
+        if @missing == :create
           # create default file
           lines = ember_model ember_app_name, model, "  ", @extension
+        else
+          return nil
         end
       else
         lines = File.readlines(ember_model_file).map(&:rstrip)
