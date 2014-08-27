@@ -1,3 +1,6 @@
+require 'coveralls'
+Coveralls.wear!
+
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
 
@@ -7,8 +10,6 @@ require 'active_model_serializers'
 require 'rake'
 require 'fileutils'
 require 'pry'
-require 'coveralls'
-Coveralls.wear!
 
 Rails.backtrace_cleaner.remove_silencers!
 
