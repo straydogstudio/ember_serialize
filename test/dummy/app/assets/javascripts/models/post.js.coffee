@@ -2,10 +2,9 @@
 
 EmberSerialize.Post = DS.Model.extend
   # ember_serialize:start
-  # ember_serialize:async false
   id: DS.attr('integer'),
   title: DS.attr('string'),
   body: DS.attr('text'),
-  authorDude: DS.belongsTo('user'),
-  comments: DS.hasMany('comments')
+  authorDude: DS.belongsTo('user', {async: true}),
+  comments: DS.hasMany('comments', {async: true})
   # ember_serialize:end
