@@ -44,7 +44,7 @@ EmberSerialize.Post = DS.Model.extend
 
 Things to keep in mind:
 * Any javascript outside the markers will be left as is. So, in the above example, `comments` will not only be left as is, it will be ignored inside as well.
-* Any line inside the markers will not be changed. So you can hand edit any line and it will not be changed. In the above example, `author` has had `inverse` added to it, and it will not be changed.
+* Any line inside the markers will not be changed. So you can hand edit any line and it will not be overwritten. In the above example, `author` has had `inverse` added to it, and it will not be changed.
 
 ###New Files
 
@@ -56,7 +56,7 @@ rake db:schema:ember[:create]
 
 ###Async: true
 
-ES defaults to `async: true` for any added association. To prevent this, pass `async:false` to the rake task:
+ES defaults to `async: true` for any new association. To prevent this, pass `async:false` to the rake task:
 
 ```bash
 rake db:schema:ember[async:false]
@@ -76,7 +76,7 @@ To prevent this, and in this case include `authorId`, use an `as_is` setting ins
 EmberSerialize.Post = DS.Model.extend
   # ember_serialize:start
   # ember_serialize:as_is authorId
-  author_id: DS.attr('integer')
+  authorId: DS.attr('integer')
   # ember_serialize:end
 ```
 
@@ -97,13 +97,12 @@ To ignore any parameter, use an `ignore` setting:
 EmberSerialize.Post = DS.Model.extend
   # ember_serialize:start
   # ember_serialize:ignore authorId
-  author: DS.belongsTo('user',{inverse: 'post'}),
   # ember_serialize:end
 ```
 
 ###CamelCase or under_score?
 
-In settings, you can use either under score or camel case:
+In settings, you can use either underScore or camel_case:
 
 ```ruby
   # ember_serialize:ignore authorId
@@ -112,13 +111,15 @@ In settings, you can use either under score or camel case:
 
 ###Multiple arguments
 
-Remember, when you are passing multiple arguments to rake, _DO NOT USE SPACES_! Use this:
+Remember, when you are passing multiple arguments to rake, _DO NOT USE SPACES!_
+
+This will work:
 
 ```bash
 rake db:schema:ember[:create,async:false]
 ```
 
-_NOT THIS:_
+_THIS WILL NOT:_
 
 ```bash
 rake db:schema:ember[:create, async:false]
