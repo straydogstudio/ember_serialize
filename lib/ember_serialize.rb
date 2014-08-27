@@ -4,13 +4,13 @@ module EmberSerialize
       attr_accessor :javascripts_dir, :models_dir
     end
 
-    attr_accessor :args, :est, :een, :eig, :eai, :eas, :missing, :force_async, :javascripts_dir, :models_dir, :extension
+    attr_accessor :args, :est, :een, :eig, :eai, :eas, :missing, :javascripts_dir, :models_dir, :extension
 
     def initialize(args)
       @args = args
       # args
       @missing = args.extras.include?(':create') ? :create : :skip
-      @force_async = args.extras.grep(/^async\:/) {|e| e =~ /true/}.first ? true : false
+      @force_async = args.extras.grep(/^async\:/) {|e| e =~ /true/}.first
       # variables
       @est = "ember_serialize:start"
       @een = "ember_serialize:end"
@@ -41,7 +41,7 @@ module EmberSerialize
       # loop through serializers
       ActiveModel::Serializer.descendants.sort_by(&:name).each do |serializer|
         if match
-          next unless serializer.name =~ /#{match}/
+          next unless serializer.name =~ /^#{match}/
         end
         schema = schema serializer
         model = model_class serializer

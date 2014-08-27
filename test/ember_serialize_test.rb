@@ -2,15 +2,29 @@ require 'test_helper'
 
 class EmberSerializeTest < ActiveSupport::TestCase
   def setup
+    setup_default_serializer
+    setup_create_serializer
+  end
+
+  def setup_default_serializer
+    return if @serializer
     Rake::Task.define_task(:environment)
-    @rapp = Rake::Application.new
-    # _, rargs = @rapp.parse_task_string("")
+    @rapp ||= Rake::Application.new
     @blank_args = Rake::TaskArguments.new([],[])
-    @create_args = Rake::TaskArguments.new([],[':create'])
-    @jdir = "test/dummy/app/assets/javascripts/"
-    @mdir = "#{@jdir}models/"
-    EmberSerialize::Serializer.javascripts_dir = @jdir
+    @jdir ||= "test/dummy/app/assets/javascripts/"
+    @mdir ||= "#{@jdir}models/"
+    EmberSerialize::Serializer.javascripts_dir ||= @jdir
     @serializer = EmberSerialize::Serializer.new(@blank_args)
+  end
+
+  def setup_create_serializer
+    return if @create_serializer
+    Rake::Task.define_task(:environment)
+    @rapp ||= Rake::Application.new
+    @create_args = Rake::TaskArguments.new([],[':create'])
+    @jdir ||= "test/dummy/app/assets/javascripts/"
+    @mdir ||= "#{@jdir}models/"
+    EmberSerialize::Serializer.javascripts_dir ||= @jdir
     @create_serializer = EmberSerialize::Serializer.new(@create_args)
   end
 
@@ -106,7 +120,8 @@ WITHOUTEM
   end
 
   test "parses model" do
-    match = [["# for more details see: http://emberjs.com/guides/models/defining-models/", "", "EmberSerialize.Post = DS.Model.extend", "  # ember_serialize:start", "  # ember_serialize:async false", "  id: DS.attr('integer'),", "  title: DS.attr('string'),", "  body: DS.attr('text'),", "  authorDude: DS.belongsTo('user'),", "  comments: DS.hasMany('comments')", "  # ember_serialize:end"], 3, 10, {"id"=>"  id: DS.attr('integer')", "title"=>"  title: DS.attr('string')", "body"=>"  body: DS.attr('text')", "authorDude"=>"  authorDude: DS.belongsTo('user')", "comments"=>"  comments: DS.hasMany('comments')"}, [], [], false, "  "]
+    revert_models
+    match = [["# for more details see: http://emberjs.com/guides/models/defining-models/", "", "EmberSerialize.Post = DS.Model.extend", "  # ember_serialize:start", "  id: DS.attr('integer'),", "  title: DS.attr('string'),", "  body: DS.attr('text'),", "  comments: DS.hasMany('comments')", "  # ember_serialize:end"], 3, 8, {"id"=>"  id: DS.attr('integer')", "title"=>"  title: DS.attr('string')", "body"=>"  body: DS.attr('text')", "comments"=>"  comments: DS.hasMany('comments')"}, [], [], true, "  "]
     result = @serializer.ember_model_parse "#{@mdir}post.js.coffee", Post
     assert_equal match, result, 'ember_model_parse'
   end
@@ -130,65 +145,80 @@ EmberSerialize.Post = DS.Model.extend
     assert_equal match, result, 'ember_model_build'
   end
 
+  test "serializes match parameter" do
+    clear_models
+    @create_serializer.serialize "Post"
+    assert_equal 1, Dir["#{@mdir}*.js.coffee"].length, "uses match parameter"
+  end
+
   test "serialize finds existing" do
+    revert_models
     prep_model 'find_existing', 'post'
     @serializer.serialize
     assert_match /find_existing/, read_model('post', /authorDude:/), 'finds existing'
-    revert_models
   end
 
   test "serialize ignores outside" do
+    revert_models
     prep_model 'ignore_outside', 'post'
     @serializer.serialize
     assert_match /ignore_outside/, read_model('post', /authorDude:/), 'ignores outside'
-    revert_models
   end
 
   test "serialize ignore setting" do
+    revert_models
     prep_model 'ignore', 'post'
     @serializer.serialize
     assert read_model('post', /body:/).nil?, 'ignore setting'
-    revert_models
   end
 
   test "serialize as_is setting" do
+    revert_models
     prep_model 'as_is', 'comment'
     @serializer.serialize
     assert_equal "  postId: DS.attr('integer'),\n", read_model('comment', /postId:/), 'as_is setting'
-    revert_models
   end
 
   test "serialize finds associations" do
+    revert_models
     File.unlink "#{@mdir}post.js.coffee"
     @create_serializer.serialize
-    assert_equal "  authorDude: DS.belongsTo('user'),\n", read_model('post', /authorDude:/), 'finds associations'
-    revert_models
+    assert_equal "  authorDude: DS.belongsTo('user', {async: true}),\n", read_model('post', /authorDude:/), 'finds associations'
   end
 
   test "skips or creates models" do
+    revert_models
     File.unlink "#{@mdir}post.js.coffee"
     @serializer.serialize
     assert !File.exists?("#{@mdir}post.js.coffee"), 'skips model'
     clear_models
     @create_serializer.serialize
     assert_equal 3, Dir["#{@mdir}*js.coffee"].length, 'creates models'
-    revert_models
   end
 
   test "accepts async argument" do
+    revert_models
     async_args = Rake::TaskArguments.new([],['async:true'])
     async_serializer = EmberSerialize::Serializer.new(async_args)
-    # async_serializer.javascripts_dir = @jdir
-    # async_serializer.models_dir = @mdir
     prep_model 'async', 'post'
     async_serializer.serialize
     lines = read_model('post')
-    assert lines.grep(/#{async_serializer.eai}/).first.nil?, 'async:true leaves no setting'
+    assert lines.grep(/#{async_serializer.eas}/).first.nil?, 'async:true leaves no setting'
     assert_match /async: true/, lines.grep(/authorDude:/).first, 'accepts async arg'
+  end
+
+  test "parses async argument" do
     revert_models
+    prep_model 'async_parse', 'post'
+    async = @serializer.force_async
+    @serializer.serialize
+    lines = read_model('post')
+    assert !lines.grep(/#{@serializer.eas} false/).first.nil?, 'ember_serializer:async false stays'
+    assert_no_match /async: true/, lines.grep(/authorDude:/).first, 'parses async arg'
   end
 
   test "accepts engine argument" do
+    revert_models
     # engine serializer
     engine_args = Rake::TaskArguments.new([],[':create','engine:em'])
     engine_serializer = EmberSerialize::Serializer.new(engine_args)
@@ -220,6 +250,13 @@ EmberSerialize.Post = DS.Model.extend
     default_serializer.serialize
     # serialize should detect coffee and restore missing post
     assert_equal 3, Dir["#{@mdir}*js.coffee"].length, 'detects coffee engine type'
-    revert_models
+  end
+
+  test "makes model directory" do
+    FileUtils.mv @mdir, "#{@jdir}models_aside"
+    some_serializer = EmberSerialize::Serializer.new(@blank_args)
+    assert File.exists?(@mdir), "makes model directory"
+    FileUtils.rm_r @mdir
+    FileUtils.mv "#{@jdir}models_aside", @mdir
   end
 end
