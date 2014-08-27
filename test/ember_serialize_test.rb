@@ -210,7 +210,6 @@ EmberSerialize.Post = DS.Model.extend
   test "parses async argument" do
     revert_models
     prep_model 'async_parse', 'post'
-    async = @serializer.force_async
     @serializer.serialize
     lines = read_model('post')
     assert !lines.grep(/#{@serializer.eas} false/).first.nil?, 'ember_serializer:async false stays'
