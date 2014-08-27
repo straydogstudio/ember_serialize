@@ -106,6 +106,7 @@ In settings, you can use either underScore or camel_case:
 
 ```ruby
   # ember_serialize:ignore authorId
+  # is the same as
   # ember_serialize:ignore author_id
 ```
 
