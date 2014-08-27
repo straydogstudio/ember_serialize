@@ -13,4 +13,4 @@ rvm:
   - 2.0.0
   - 2.1.0
 script:
-  test/ci.rb
+  test/ci.sh
