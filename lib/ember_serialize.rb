@@ -1,4 +1,6 @@
 module EmberSerialize
+  require 'ember_serialize/railtie' if defined?(Rails)
+
   class Serializer
     class << self
       attr_accessor :javascripts_dir, :models_dir
