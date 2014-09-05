@@ -141,17 +141,10 @@ MODEL
 
       if line_start && line_end
         # find settings for ignore, as_is, and async
-        ignore = lines.grep(/#{@eig}/) do |l|
-          l.gsub(/.*#{@eig} (.*)\s*$/, '\1').split(/\s*,\s*/)
-        end.flatten.uniq.map {|t| camel(t)}
-        as_is = lines.grep(/#{@eai}/) do |l|
-          l.gsub(/.*#{@eai} (.*)\s*$/, '\1').split(/\s*,\s*/)
-        end.flatten.uniq.map {|t| camel(t)}
+        ignore = setting_ignore lines
+        as_is = setting_as_is lines
         if @force_async.nil?
-          async = lines.grep(/#{@eas}/) do |l|
-            l.gsub(/.*#{@eai} (.*)\s*$/, '\1') == 'true'
-          end.flatten.last
-          async = true if async.nil?
+          async = setting_async lines
         else
           async = @force_async
         end
@@ -161,6 +154,7 @@ MODEL
 
         # catalog existing lines
         existing = {}
+        outside = []
         lines.each_with_index do |line, i|
           next if line =~ /^\s*#/ # reject comments
           next unless line =~ /:\s*DS\./ #include DS lines
@@ -198,6 +192,7 @@ MODEL
         next if camel_name == 'id'
         unless ignore.include? camel_name
           new_lines << line
+          ignore << camel_name
         end
       end
 
@@ -213,8 +208,10 @@ MODEL
 
       # build final content
       content = [ lines[0..line_start].join("\n") ]
-      unless ignore.blank?
-        content << "#{indent}# #{@eig} #{ignore.join(", ")}"
+      # write original ignore setting
+      ignore_setting = setting_ignore(lines)
+      unless ignore_setting.blank?
+        content << "#{indent}# #{@eig} #{ignore_setting.join(", ")}"
       end
       unless as_is.blank?
         content << "#{indent}# #{@eai} #{as_is.join(", ")}"
@@ -248,6 +245,25 @@ MODEL
       else 
         {}
       end
+    end
+
+    def setting_ignore(lines)
+      lines.grep(/#{@eig}/) do |l|
+        l.gsub(/.*#{@eig} (.*)\s*$/, '\1').split(/\s*,\s*/)
+      end.flatten.uniq.map {|t| camel(t)}
+    end
+
+    def setting_as_is(lines)
+      lines.grep(/#{@eai}/) do |l|
+        l.gsub(/.*#{@eai} (.*)\s*$/, '\1').split(/\s*,\s*/)
+      end.flatten.uniq.map {|t| camel(t)}
+    end
+
+    def setting_async(lines)
+      async = lines.grep(/#{@eas}/) do |l|
+        l.gsub(/.*#{@eai} (.*)\s*$/, '\1') == 'true'
+      end.flatten.last
+      async.nil? ? true : async
     end
   end
 end
