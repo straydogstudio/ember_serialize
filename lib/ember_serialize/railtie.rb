@@ -4,7 +4,7 @@ module EmberSerialize
     railtie_name :ember_serialize
 
     rake_tasks do
-      load "lib/tasks/ember_serialize_tasks.rake"
+      load "tasks/ember_serialize_tasks.rake"
     end
   end
 end
