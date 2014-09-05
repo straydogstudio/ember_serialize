@@ -140,10 +140,14 @@ rake db:schema:ember[:create, async:false]
 
 ##Change log
 
-**August 27, 2014**: 0.2.0 release
+**September 5, 2014**: 0.0.3 release
+
+- Railtie for proper inclusion
+
+**August 27, 2014**: 0.0.2 release
 
 - Fix async detection: defaults to true
 
-**August 27, 2014**: 0.1.0 release
+**August 27, 2014**: 0.0.1 release
 
 - Initial release
