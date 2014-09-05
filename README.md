@@ -140,7 +140,7 @@ rake db:schema:ember[:create, async:false]
 
 ##Change log
 
-**September 5, 2014**: 0.0.3 release
+**September 5, 2014**: 0.0.4 release
 
 - Railtie for proper inclusion
 
