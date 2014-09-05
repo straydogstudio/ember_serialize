@@ -8,6 +8,12 @@ Version](https://badge.fury.io/rb/ember_serialize.png)](http://badge.fury.io/rb/
 [![Coverage
 Status](https://coveralls.io/repos/straydogstudio/ember_serialize/badge.png)](https://coveralls.io/r/straydogstudio/ember_serialize)
 
+##About
+
+Ember-Serialize intelligently updates your Ember.js models from your serializers. It uses introspection to keep model names correct. It also tries to be unobtrusive, and will not overwrite or replace anything you have in your ember model.
+
+Inspiration for this gem came from [this article](http://techblog.fundinggates.com/blog/2013/03/automatically-generate-ember-models-from-rails-serializers/) by Matt Rogish. Instead of creating a JSON schema that is parsed by Ember.js, I chose to directly edit the Ember.js models.
+
 ##Installation
 
 In your Gemfile:
