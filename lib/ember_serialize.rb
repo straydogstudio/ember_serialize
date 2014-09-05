@@ -45,8 +45,9 @@ module EmberSerialize
         if match
           next unless serializer.name =~ /^#{match}/
         end
-        schema = schema serializer
         model = model_class serializer
+        next unless model
+        schema = schema serializer
         ember_model_file = @models_dir + model.table_name.singularize + @extension
         new_content = ember_model_build(schema, model, ember_model_parse(ember_model_file, model))
         if new_content
@@ -228,7 +229,11 @@ MODEL
 
     def model_class(serializer)
       if serializer.respond_to? :model_class
-        return serializer.model_class
+        begin
+          return serializer.model_class
+        rescue NameError
+          return nil
+        end
       end
       @model_classes ||= Hash.new do |h,k|
         h[k] = k.name.gsub(/Serializer$/,'').constantize

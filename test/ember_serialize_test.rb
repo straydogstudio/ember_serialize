@@ -127,7 +127,7 @@ WITHOUTEM
   end
 
   test "builds model" do
-    ams = ActiveModel::Serializer.descendants.sort_by(&:name)[1]
+    ams = ActiveModel::Serializer.descendants.sort_by(&:name)[2]
     args = [["# for more details see: http://emberjs.com/guides/models/defining-models/", "", "EmberSerialize.Post = DS.Model.extend", "  # ember_serialize:start", "  # ember_serialize:async false", "  id: DS.attr('integer'),", "  title: DS.attr('string'),", "  body: DS.attr('text'),", "  authorDude: DS.belongsTo('user'),", "  comments: DS.hasMany('comments')", "  # ember_serialize:end"], 3, 10, {"id"=>"  id: DS.attr('integer')", "title"=>"  title: DS.attr('string')", "body"=>"  body: DS.attr('text')", "authorDude"=>"  authorDude: DS.belongsTo('user')", "comments"=>"  comments: DS.hasMany('comments')"}, [], [], false, "  "]
     match = "# for more details see: http://emberjs.com/guides/models/defining-models/
 
@@ -205,6 +205,14 @@ EmberSerialize.Post = DS.Model.extend
     lines = read_model('post')
     assert lines.grep(/#{async_serializer.eas}/).first.nil?, 'async:true leaves no setting'
     assert_match /async: true/, lines.grep(/authorDude:/).first, 'accepts async arg'
+  end
+
+  test "does not throw NameError on ApplicationSerializer" do
+    revert_models
+    # this should pass on the ApplicationSerializer
+    assert_nothing_raised NameError do
+      @serializer.serialize
+    end
   end
 
   test "parses async argument" do
