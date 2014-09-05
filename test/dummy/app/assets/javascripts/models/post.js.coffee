@@ -2,7 +2,6 @@
 
 EmberSerialize.Post = DS.Model.extend
   # ember_serialize:start
-  id: DS.attr('integer'),
   title: DS.attr('string'),
   body: DS.attr('text'),
   authorDude: DS.belongsTo('user', {async: true}),

@@ -3,7 +3,6 @@
 EmberSerialize.Post = DS.Model.extend
   # ember_serialize:start
   # ember_serialize:async false
-  id: DS.attr('integer'),
   title: DS.attr('string'),
   body: DS.attr('text'),
   authorDude: DS.belongsTo('user',{inverse:'find_existing'}),

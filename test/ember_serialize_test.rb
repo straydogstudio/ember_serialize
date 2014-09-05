@@ -121,7 +121,7 @@ WITHOUTEM
 
   test "parses model" do
     revert_models
-    match = [["# for more details see: http://emberjs.com/guides/models/defining-models/", "", "EmberSerialize.Post = DS.Model.extend", "  # ember_serialize:start", "  id: DS.attr('integer'),", "  title: DS.attr('string'),", "  body: DS.attr('text'),", "  comments: DS.hasMany('comments')", "  # ember_serialize:end"], 3, 8, {"id"=>"  id: DS.attr('integer')", "title"=>"  title: DS.attr('string')", "body"=>"  body: DS.attr('text')", "comments"=>"  comments: DS.hasMany('comments')"}, [], [], true, "  "]
+    match = [["# for more details see: http://emberjs.com/guides/models/defining-models/", "", "EmberSerialize.Post = DS.Model.extend", "  # ember_serialize:start", "  title: DS.attr('string'),", "  body: DS.attr('text'),", "  comments: DS.hasMany('comments')", "  # ember_serialize:end"], 3, 7, {"title"=>"  title: DS.attr('string')", "body"=>"  body: DS.attr('text')", "comments"=>"  comments: DS.hasMany('comments')"}, [], [], true, "  "]
     result = @serializer.ember_model_parse "#{@mdir}post.js.coffee", Post
     assert_equal match, result, 'ember_model_parse'
   end
@@ -134,7 +134,6 @@ WITHOUTEM
 EmberSerialize.Post = DS.Model.extend
   # ember_serialize:start
   # ember_serialize:async false
-  id: DS.attr('integer'),
   title: DS.attr('string'),
   body: DS.attr('text'),
   authorDude: DS.belongsTo('user'),
@@ -177,6 +176,13 @@ EmberSerialize.Post = DS.Model.extend
     prep_model 'as_is', 'comment'
     @serializer.serialize
     assert_equal "  postId: DS.attr('integer'),\n", read_model('comment', /postId:/), 'as_is setting'
+  end
+
+  test "ignore id" do
+    revert_models
+    prep_model 'ignore_id', 'post'
+    @serializer.serialize
+    assert_equal nil, read_model('post', /\sid:/), 'ignore_id setting'
   end
 
   test "serialize finds associations" do

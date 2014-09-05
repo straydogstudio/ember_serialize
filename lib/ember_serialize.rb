@@ -118,7 +118,7 @@ MODEL
           end
         end
       else
-        existing[camel_name] || "#{indent}#{camel_name}: DS.attr('#{type}')"
+        existing[camel_name] || "#{indent}#{camel_name}: DS.attr('#{type || 'string'}')"
       end
       [camel_name, line]
     end
@@ -195,6 +195,7 @@ MODEL
         else
           ember_reflect(model, name, :attribute, async, existing, indent, type)
         end
+        next if camel_name == 'id'
         unless ignore.include? camel_name
           new_lines << line
         end
