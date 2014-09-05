@@ -49,7 +49,7 @@ EmberSerialize.Post = DS.Model.extend
 ```
 
 Things to keep in mind:
-* Any javascript outside the markers will be left as is. So, in the above example, `comments` will not only be left as is, it will be ignored inside as well.
+* Any javascript outside the markers will be left as is. So, in the above example, `comments` will not only be left as is, it will not be added inside either.
 * Any line inside the markers will not be changed. So you can hand edit any line and it will not be overwritten. In the above example, `author` has had `inverse` added to it, and it will not be changed.
 
 ###New Files
