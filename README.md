@@ -146,6 +146,7 @@ rake db:schema:ember[:create, async:false]
 
 ##Change log
 
+- **September 6, 2014**: 0.0.7 - Translate types
 - **September 5, 2014**: 0.0.6 - Force ignore of id
 - **September 5, 2014**: 0.0.5 - Skip missing models
 - **September 5, 2014**: 0.0.4 - Railtie for proper inclusion
