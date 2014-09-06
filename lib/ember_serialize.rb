@@ -270,7 +270,7 @@ MODEL
 
     def setting_async(lines)
       async = lines.grep(/#{@eas}/) do |l|
-        l.gsub(/.*#{@eai} (.*)\s*$/, '\1') == 'true'
+        l.gsub(/.*#{@eas} (.*)\s*$/, '\1') == 'true'
       end.flatten.last
       async.nil? ? true : async
     end
