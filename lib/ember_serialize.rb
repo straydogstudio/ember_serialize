@@ -21,6 +21,15 @@ module EmberSerialize
       @eas = "ember_serialize:async"
       @javascripts_dir = self.class.javascripts_dir || "app/assets/javascripts/"
       @models_dir = self.class.models_dir || @javascripts_dir+"models/"
+      @types = Hash.new(:string).merge({
+        # string: :string,
+        # text: :string,
+        date: :date,
+        float: :number,
+        integer: :number,
+        boolean: :boolean,
+        decimal: :number
+      })
       unless File.exists? @models_dir
         require 'fileutils'
         FileUtils.mkdir_p @models_dir
@@ -118,7 +127,7 @@ MODEL
           end
         end
       else
-        existing[camel_name] || "#{indent}#{camel_name}: DS.attr('#{type || 'string'}')"
+        existing[camel_name] || "#{indent}#{camel_name}: DS.attr('#{@types[type]}')"
       end
       [camel_name, line]
     end
