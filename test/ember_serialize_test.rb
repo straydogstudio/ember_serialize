@@ -118,7 +118,7 @@ WITHOUTEM
   end
 
   test "ember_reflect attribute" do
-    assert_equal ["id", "  id: DS.attr('integer')"], @serializer.ember_reflect(Post, :id, :attribute, false, {}, '  ', :integer), 'attribute integer'
+    assert_equal ["id", "  id: DS.attr('number')"], @serializer.ember_reflect(Post, :id, :attribute, false, {}, '  ', :integer), 'attribute integer'
     assert_equal ["title", "  title: DS.attr('string')"], @serializer.ember_reflect(Post, :title, :attribute, false, {}, '  ', :string), 'attribute string'
   end
 
@@ -126,7 +126,7 @@ WITHOUTEM
     assert_equal ["post", "  post: DS.belongsTo('post')"], @serializer.ember_reflect(Comment, :post, :belongs_to, false, {}, '  '), 'belongs_to direct'
     assert_equal ["post", "  post: DS.belongsTo('post', {async: true})"], @serializer.ember_reflect(Comment, :post, :belongs_to, true, {}, '  '), 'belongs_to async'
     assert_equal ["post", "  post: DS.belongsTo('post')"], @serializer.ember_reflect(Comment, :post_id, :belongs_to, false, {}, '  '), 'belongs_to direct with id'
-    assert_equal ["postId", "  postId: DS.attr('integer')"], @serializer.ember_reflect(Comment, :post_id, :as_is, false, {}, '  ', 'integer'), 'belongs_to as_is'
+    assert_equal ["postId", "  postId: DS.attr('number')"], @serializer.ember_reflect(Comment, :post_id, :as_is, false, {}, '  ', :integer), 'belongs_to as_is'
     assert_equal ["authorDude", "  authorDude: DS.belongsTo('user')"], @serializer.ember_reflect(Post, :author_dude, :belongs_to, false, {}, '  '), 'belongs_to associated'
     assert_equal ["post", "  post: DS.belongsTo('post', {inverse: 'lemoo'})"], @serializer.ember_reflect(Comment, :post, :belongs_to, false, {'post' => "  post: DS.belongsTo('post', {inverse: 'lemoo'})"}, '  '), 'belongs_to existing'
   end
@@ -154,6 +154,7 @@ EmberSerialize.Post = DS.Model.extend
   # ember_serialize:async false
   title: DS.attr('string'),
   body: DS.attr('text'),
+  createdAt: DS.attr('date'),
   authorDude: DS.belongsTo('user'),
   comments: DS.hasMany('comments')
   # ember_serialize:end"
@@ -193,7 +194,7 @@ EmberSerialize.Post = DS.Model.extend
     revert_models
     prep_model 'as_is', 'comment'
     @serializer.serialize
-    assert_equal "  postId: DS.attr('integer'),\n", read_model('comment', /postId:/), 'as_is setting'
+    assert_equal "  postId: DS.attr('number'),\n", read_model('comment', /postId:/), 'as_is setting'
   end
 
   test "ignore id" do
