@@ -82,6 +82,24 @@ class EmberSerializeTest < ActiveSupport::TestCase
     assert_equal "EmberSerialize", @serializer.ember_app_name
   end
 
+  test "setting_ignore" do
+    assert_equal ["one", "two"], @serializer.setting_ignore(["ember_serialize:ignore one two"])
+    assert_equal ["one", "two"], @serializer.setting_ignore(["ember_serialize:ignore one,two"])
+    assert_equal ["one", "two"], @serializer.setting_ignore(["ember_serialize:ignore one, two"])
+  end
+
+  test "setting_as_is" do
+    assert_equal ["one", "two"], @serializer.setting_as_is(["ember_serialize:as_is one two"])
+    assert_equal ["one", "two"], @serializer.setting_as_is(["ember_serialize:as_is one,two"])
+    assert_equal ["one", "two"], @serializer.setting_as_is(["ember_serialize:as_is one, two"])
+  end
+
+  test "setting_async" do
+    assert_equal true, @serializer.setting_async([""]), 'setting_async blank'
+    assert_equal true, @serializer.setting_async(["ember_serialize:async true"]), 'setting_async true'
+    assert_equal false, @serializer.setting_async(["ember_serialize:async false"]), 'setting_async false'
+  end
+
   test "ember_model" do
     assert_equal <<WITHEM.split(/\n/), @serializer.ember_model("App", Post, "  ", ".js.em")
 # for more details see: http://emberjs.com/guides/models/defining-models/

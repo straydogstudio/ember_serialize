@@ -249,13 +249,13 @@ MODEL
 
     def setting_ignore(lines)
       lines.grep(/#{@eig}/) do |l|
-        l.gsub(/.*#{@eig} (.*)\s*$/, '\1').split(/\s*,\s*/)
+        l.gsub(/.*#{@eig} (.*)\s*$/, '\1').split(/[\s,]+/)
       end.flatten.uniq.map {|t| camel(t)}
     end
 
     def setting_as_is(lines)
       lines.grep(/#{@eai}/) do |l|
-        l.gsub(/.*#{@eai} (.*)\s*$/, '\1').split(/\s*,\s*/)
+        l.gsub(/.*#{@eai} (.*)\s*$/, '\1').split(/[\s,]+/)
       end.flatten.uniq.map {|t| camel(t)}
     end
 
