@@ -127,7 +127,8 @@ MODEL
           if existing[camel_name].to_s =~ /hasMany/
             existing[camel_name]
           else
-            "#{indent}#{camel_name}: DS.hasMany('#{camel_name}'#{_async})"
+            assoc_name = assoc.table_name.singularize
+            "#{indent}#{camel_name}: DS.hasMany('#{assoc_name}'#{_async})"
           end
         end
       else
