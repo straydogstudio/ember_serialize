@@ -6,5 +6,5 @@ EmberSerialize.Post = DS.Model.extend
   title: DS.attr('string'),
   body: DS.attr('text'),
   authorDude: DS.belongsTo('user',{inverse:'find_existing'}),
-  comments: DS.hasMany('comments')
+  comments: DS.hasMany('comment')
   # ember_serialize:end

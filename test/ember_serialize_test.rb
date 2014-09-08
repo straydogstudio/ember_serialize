@@ -132,21 +132,21 @@ WITHOUTEM
   end
 
   test "ember_reflect has_many" do
-    assert_equal ["posts", "  posts: DS.hasMany('posts')"], @serializer.ember_reflect(User, :posts, :has_many, false, {}, '  '), 'has_many'
-    assert_equal ["posts", "  posts: DS.hasMany('posts', {async: true})"], @serializer.ember_reflect(User, :posts, :has_many, true, {}, '  '), 'has_many async true'
-    assert_equal ["posts", "  posts: DS.hasMany('posts', {inverse: 'lemoo'})"], @serializer.ember_reflect(User, :posts, :has_many, false, {'posts' => "  posts: DS.hasMany('posts', {inverse: 'lemoo'})"}, '  '), 'has_many existing'
+    assert_equal ["posts", "  posts: DS.hasMany('post')"], @serializer.ember_reflect(User, :posts, :has_many, false, {}, '  '), 'has_many'
+    assert_equal ["posts", "  posts: DS.hasMany('post', {async: true})"], @serializer.ember_reflect(User, :posts, :has_many, true, {}, '  '), 'has_many async true'
+    assert_equal ["posts", "  posts: DS.hasMany('post', {inverse: 'lemoo'})"], @serializer.ember_reflect(User, :posts, :has_many, false, {'posts' => "  posts: DS.hasMany('post', {inverse: 'lemoo'})"}, '  '), 'has_many existing'
   end
 
   test "parses model" do
     revert_models
-    match = [["# for more details see: http://emberjs.com/guides/models/defining-models/", "", "EmberSerialize.Post = DS.Model.extend", "  # ember_serialize:start", "  title: DS.attr('string'),", "  body: DS.attr('text'),", "  comments: DS.hasMany('comments')", "  # ember_serialize:end"], 3, 7, {"title"=>"  title: DS.attr('string')", "body"=>"  body: DS.attr('text')", "comments"=>"  comments: DS.hasMany('comments')"}, [], [], true, "  "]
+    match = [["# for more details see: http://emberjs.com/guides/models/defining-models/", "", "EmberSerialize.Post = DS.Model.extend", "  # ember_serialize:start", "  title: DS.attr('string'),", "  body: DS.attr('text'),", "  comments: DS.hasMany('comment')", "  # ember_serialize:end"], 3, 7, {"title"=>"  title: DS.attr('string')", "body"=>"  body: DS.attr('text')", "comments"=>"  comments: DS.hasMany('comment')"}, [], [], true, "  "]
     result = @serializer.ember_model_parse "#{@mdir}post.js.coffee", Post
     assert_equal match, result, 'ember_model_parse'
   end
 
   test "builds model" do
     ams = ActiveModel::Serializer.descendants.sort_by(&:name)[2]
-    args = [["# for more details see: http://emberjs.com/guides/models/defining-models/", "", "EmberSerialize.Post = DS.Model.extend", "  # ember_serialize:start", "  # ember_serialize:async false", "  id: DS.attr('integer'),", "  title: DS.attr('string'),", "  body: DS.attr('text'),", "  authorDude: DS.belongsTo('user'),", "  comments: DS.hasMany('comments')", "  # ember_serialize:end"], 3, 10, {"id"=>"  id: DS.attr('integer')", "title"=>"  title: DS.attr('string')", "body"=>"  body: DS.attr('text')", "authorDude"=>"  authorDude: DS.belongsTo('user')", "comments"=>"  comments: DS.hasMany('comments')"}, [], [], false, "  "]
+    args = [["# for more details see: http://emberjs.com/guides/models/defining-models/", "", "EmberSerialize.Post = DS.Model.extend", "  # ember_serialize:start", "  # ember_serialize:async false", "  id: DS.attr('integer'),", "  title: DS.attr('string'),", "  body: DS.attr('text'),", "  authorDude: DS.belongsTo('user'),", "  comments: DS.hasMany('comment')", "  # ember_serialize:end"], 3, 10, {"id"=>"  id: DS.attr('integer')", "title"=>"  title: DS.attr('string')", "body"=>"  body: DS.attr('text')", "authorDude"=>"  authorDude: DS.belongsTo('user')", "comments"=>"  comments: DS.hasMany('comment')"}, [], [], false, "  "]
     match = "# for more details see: http://emberjs.com/guides/models/defining-models/
 
 EmberSerialize.Post = DS.Model.extend
@@ -156,7 +156,7 @@ EmberSerialize.Post = DS.Model.extend
   body: DS.attr('text'),
   createdAt: DS.attr('date'),
   authorDude: DS.belongsTo('user'),
-  comments: DS.hasMany('comments')
+  comments: DS.hasMany('comment')
   # ember_serialize:end"
     result = @serializer.ember_model_build @serializer.schema(ams),
       Post, args

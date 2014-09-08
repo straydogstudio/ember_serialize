@@ -5,5 +5,5 @@ EmberSerialize.Post = DS.Model.extend
   # ember_serialize:async false
   title: DS.attr('string'),
   body: DS.attr('text'),
-  comments: DS.hasMany('comments')
+  comments: DS.hasMany('comment')
   # ember_serialize:end
