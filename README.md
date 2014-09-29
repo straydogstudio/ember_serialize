@@ -36,6 +36,8 @@ rake db:schema:ember
 
 ###Configuration
 
+####Directories
+
 By default EmberSerialize will look inside your `app/javascripts` directory for your Ember application. Furthermore, it will look below that for a `models` directory to find your Ember models.
 
 If your Ember app is somewhere else, use an intitializer to change it (e.g. `config/initializers/ember_serialize.rb`):
@@ -51,6 +53,14 @@ EmberSerialize::Serializer.models_dir = "path/to/ember/models/dir"
 ```
 
 Relative paths will be with respect to the directory of your Rails app (where you run the rake task.)
+
+####App name
+
+If EmberSerialize fails to detect your Ember application name set it with an intializer:
+
+```ruby
+EmberSerialize::Serializer.app_name = "RubyHeroes"
+```
 
 ###Existing Files
 
@@ -68,6 +78,15 @@ EmberSerialize.Post = DS.Model.extend
 Things to keep in mind:
 * Any javascript outside the markers will be left as is. So, in the above example, `comments` will not only be left as is, it will not be added inside either.
 * Any line inside the markers will not be changed. So you can hand edit any line and it will not be overwritten. In the above example, `author` has had `inverse` added to it, and it will not be changed.
+
+###Inject markers
+
+To inject the `ember_serialize` markers in existing files, pass in the `:inject` parameter. To only inject tags in a specific model, use `inject:model_name`. EmberScript will match the passed name with the file name.
+
+```bash
+rake db:schema:ember[:inject]
+rake db:schema:ember[inject:post]
+```
 
 ###New Files
 
@@ -160,9 +179,9 @@ rake db:schema:ember[:create, async:false]
 
 ##Contributors
 
-
 ##Change log
 
+- **September 29, 2014**: 0.0.9 - Inject markers (all or one), set app name
 - **September 8, 2014**: 0.0.8 - Reflect & singularize hasMany assocation
 - **September 6, 2014**: 0.0.7 - Translate types
 - **September 5, 2014**: 0.0.6 - Force ignore of id
