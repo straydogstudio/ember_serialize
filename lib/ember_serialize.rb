@@ -3,7 +3,7 @@ module EmberSerialize
 
   class Serializer
     class << self
-      attr_accessor :javascripts_dir, :models_dir
+      attr_accessor :javascripts_dir, :models_dir, :app_name
     end
 
     attr_accessor :args, :est, :een, :eig, :eai, :eas, :missing, :javascripts_dir, :models_dir, :extension
@@ -13,6 +13,8 @@ module EmberSerialize
       # args
       @missing = args.extras.include?(':create') ? :create : :skip
       @force_async = args.extras.grep(/^async\:/) {|e| e =~ /true/}.first
+      @inject = args.extras.grep(/inject\:/) {|e| e.split(/:/).last }.first
+      @inject ||= args.extras.include?(':inject') ? true : false
       # variables
       @est = "ember_serialize:start"
       @een = "ember_serialize:end"
@@ -152,6 +154,13 @@ MODEL
       # find start/end markers
       line_start = lines.index {|l| l =~ /#{@est}/}
       line_end = lines.index {|l| l =~ /#{@een}/}
+
+      if (@inject == true || @inject == File.basename(ember_model_file).split('.').first) && !(line_start || line_end)
+        line_start = lines.length
+        line_end = line_start + 1
+        lines << "  # #{@est}"
+        lines << "  # #{@een}"
+      end
 
       if line_start && line_end
         # find settings for ignore, as_is, and async

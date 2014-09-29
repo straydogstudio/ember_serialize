@@ -221,6 +221,29 @@ EmberSerialize.Post = DS.Model.extend
     assert_equal 3, Dir["#{@mdir}*js.coffee"].length, 'creates models'
   end
 
+  test "injects delimiters" do
+    inject_args = Rake::TaskArguments.new([],['inject:post'])
+    inject_serializer = EmberSerialize::Serializer.new(inject_args)
+    clear_models
+    Dir["#{@mdir}blank/*"].each do |f|
+      FileUtils.cp f, @mdir
+    end
+    inject_serializer.serialize
+    assert_equal "  # ember_serialize:start\n", read_model('post', /serialize:start/), 'finds injected delimiter'
+    assert_equal nil, read_model('comment', /serialize:start/), 'finds not injected delimiter'
+    # inject all
+    inject_args = Rake::TaskArguments.new([],[':inject'])
+    inject_serializer = EmberSerialize::Serializer.new(inject_args)
+    clear_models
+    Dir["#{@mdir}blank/*"].each do |f|
+      FileUtils.cp f, @mdir
+    end
+    inject_serializer.serialize
+    %w{comment post user}.each do |model|
+      assert_equal "  # ember_serialize:start\n", read_model(model, /serialize:start/), "finds injected delimiter in #{model}"
+    end
+  end
+
   test "accepts async argument" do
     revert_models
     async_args = Rake::TaskArguments.new([],['async:true'])
