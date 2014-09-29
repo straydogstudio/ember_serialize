@@ -5,8 +5,7 @@ Ember-Serialize &mdash; Generate ember models from Rails serializers
 Version](https://badge.fury.io/rb/ember_serialize.png)](http://badge.fury.io/rb/ember_serialize)
 [![Build Status](https://secure.travis-ci.org/straydogstudio/ember_serialize.png?branch=master)](http://travis-ci.org/straydogstudio/ember_serialize)
 [![Dependency Status](https://gemnasium.com/straydogstudio/ember_serialize.png?branch=master)](https://gemnasium.com/straydogstudio/ember_serialize)
-[![Coverage
-Status](https://coveralls.io/repos/straydogstudio/ember_serialize/badge.png)](https://coveralls.io/r/straydogstudio/ember_serialize)
+[![Coverage Status](https://coveralls.io/repos/straydogstudio/ember_serialize/badge.png)](https://coveralls.io/r/straydogstudio/ember_serialize)
 
 ##About
 
@@ -34,6 +33,19 @@ Ember-Serialize provides a rake task that parses your serializers and updates yo
 ```bash
 rake db:schema:ember
 ```
+
+###Configuration
+
+By default EmberSerialize will look inside your `app/javascripts` directory for your Ember application. Furthermore, it will look below that for a `models` directory to find your Ember models.
+
+If your Ember app is somewhere else, use an intitializer to change it (e.g. `config/initializers/ember_serialize.rb`):
+
+```ruby
+EmberSerialize::Serializer.javascripts_dir = "relative/or/absolute/path/to/your/ember/app/dir"
+# if models is not immediately under the above javascripts directory, set it too:
+EmberSerialize::Serializer.models_dir = "relative/or/absolute/path/to/your/ember/models/dir"
+
+Relative paths will be with respect to the directory of your Rails app (where you run the rake task.)
 
 ###Existing Files
 
