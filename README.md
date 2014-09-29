@@ -46,6 +46,7 @@ EmberSerialize::Serializer.javascripts_dir = "relative/or/absolute/path/to/your/
 EmberSerialize::Serializer.models_dir = "relative/or/absolute/path/to/your/ember/models/dir"
 
 Relative paths will be with respect to the directory of your Rails app (where you run the rake task.)
+```
 
 ###Existing Files
 
