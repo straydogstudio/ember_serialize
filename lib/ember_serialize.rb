@@ -13,8 +13,13 @@ module EmberSerialize
       # args
       @missing = args.extras.include?(':create') ? :create : :skip
       @force_async = args.extras.grep(/^async\:/) {|e| e =~ /true/}.first
-      @inject = args.extras.grep(/inject\:/) {|e| e.split(/:/).last }.first
-      @inject ||= args.extras.include?(':inject') ? true : false
+      if @inject = args.extras.grep(/inject\:/) {|e| e.split(/:/).last }.first
+        @inject.downcase!
+      elsif args.extras.include?(':inject')
+        @inject = true
+      else
+        @inject = false
+      end
       # variables
       @est = "ember_serialize:start"
       @een = "ember_serialize:end"
