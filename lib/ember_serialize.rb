@@ -86,7 +86,7 @@ module EmberSerialize
         end.map do |f|
           open(f) do |f|
             f.each_line.detect do |l|
-              /Ember.Application.create/.match(l)
+              /Em.Application.create|Ember.Application.create/.match(l)
             end
           end
         end.compact.first.strip.gsub /.*window\.(\w+) =.*$/, '\1'
