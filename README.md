@@ -41,12 +41,16 @@ By default EmberSerialize will look inside your `app/javascripts` directory for 
 If your Ember app is somewhere else, use an intitializer to change it (e.g. `config/initializers/ember_serialize.rb`):
 
 ```ruby
-EmberSerialize::Serializer.javascripts_dir = "relative/or/absolute/path/to/your/ember/app/dir"
-# if models is not immediately under the above javascripts directory, set it too:
-EmberSerialize::Serializer.models_dir = "relative/or/absolute/path/to/your/ember/models/dir"
+EmberSerialize::Serializer.javascripts_dir = "path/to/ember/app/dir"
+```
+
+If models is not immediately under the above javascripts directory, set it also:
+
+```ruby
+EmberSerialize::Serializer.models_dir = "path/to/ember/models/dir"
+```
 
 Relative paths will be with respect to the directory of your Rails app (where you run the rake task.)
-```
 
 ###Existing Files
 
